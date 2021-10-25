@@ -17,21 +17,59 @@ const config: webpack.Configuration = {
     },
     plugins: [
         new HtmlWebpackPlugin(),
-        new ModuleLogger(),
+        new ModuleLogger({
+            srcRoot: path.resolve(__dirname, 'src'),
+            output: path.resolve(__dirname, 'unused'),
+        }),
         new StatoscopePlugin({
             saveStatsTo: 'stats.json',
             saveOnlyStats: false,
             open: false,
-        }),
+        })
     ],
     resolve: {
         fallback: {
             "buffer": require.resolve("buffer"),
             "stream": false,
         },
+        extensions: ['.tsx', '.ts', '.js'],
+        alias: {
+            'bn.js$': false,
+        },
     },
     module: {
+        rules: [
+            {
+                test: /\.(ts|tsx)$/i,
+                loader: 'ts-loader',
+                exclude: ['/node_modules/'],
+            }
+        ]
     },
+    optimization: {
+        minimize: true,
+        moduleIds: 'deterministic',
+        innerGraph: true,
+        concatenateModules: true,
+        splitChunks: {
+          chunks: 'all',
+          minChunks: 2,
+          minSize: 0,
+          maxSize: 3 * 1024 * 100,
+          cacheGroups: {
+            vendor: {
+              test: /[\\/]node_modules[\\/]/,
+            },           
+          },        
+        },
+    },
+
+    cache: {
+        type: 'filesystem',
+        buildDependencies: {
+            config: [__filename],
+        },
+    }
 };
 
 export default config;
