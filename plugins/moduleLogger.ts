@@ -18,7 +18,6 @@ class ModuleLogger {
 
     apply(compiler: Compiler) {
         const usedImports = new Set()
-        const extensions = (compiler.options.resolve.extensions)
 
         compiler.hooks.normalModuleFactory.tap(
             'ModuleLogger',
@@ -38,14 +37,10 @@ class ModuleLogger {
         );
 
         compiler.hooks.done.tap('ModuleLogger', () => {
-            glob(this.options.srcRoot + '/**/*', (err, files) => {
-                const result = files.map((file) => {
-                    return path.resolve(__dirname, '..' ,file)
-                }).filter(file => {
-                    const correctExt = extensions.some(ext => file.endsWith(ext))
-                    if (!correctExt) return false
-                    return !usedImports.has(file)
-                })
+            glob(this.options.srcRoot + '/**/*', { nodir: true }, (err, files) => {
+                const result = files
+                    .map((file) => path.resolve(__dirname, '..' ,file))
+                    .filter(file => !usedImports.has(file))
                 
                 fs.writeFileSync(this.options.output, JSON.stringify(result, null, 2))
             });
