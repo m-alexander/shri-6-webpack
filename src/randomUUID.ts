@@ -1,3 +1,1 @@
-// @ts-ignore
-import uuid from 'uuid'
-export default {randomUUID: uuid}
+export default crypto
