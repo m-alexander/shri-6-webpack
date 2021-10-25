@@ -36,10 +36,9 @@ const config: webpack.Configuration = {
             "stream": false
         },
         extensions: ['.tsx', '.ts', '.js'],
-        alias: {
-            'bn.js$': false,
-            'crypto-browserify$': path.resolve(__dirname, 'src/randomUUID.ts')
-        },
+    },
+    externals: {
+        'crypto-browserify': 'crypto'
     },
     module: {
         rules: [
