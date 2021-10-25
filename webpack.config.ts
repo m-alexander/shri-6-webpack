@@ -16,10 +16,13 @@ const config: webpack.Configuration = {
         filename: '[name].[contenthash].js',
     },
     plugins: [
-        new HtmlWebpackPlugin(),
+        new HtmlWebpackPlugin({
+            template: path.resolve(__dirname, 'src/index.html'),
+        }),
         new ModuleLogger({
             srcRoot: path.resolve(__dirname, 'src'),
             output: path.resolve(__dirname, 'unused'),
+            exclude: [/index\.html/]
         }),
         new StatoscopePlugin({
             saveStatsTo: 'stats.json',
@@ -30,11 +33,12 @@ const config: webpack.Configuration = {
     resolve: {
         fallback: {
             "buffer": require.resolve("buffer"),
-            "stream": false,
+            "stream": false
         },
         extensions: ['.tsx', '.ts', '.js'],
         alias: {
             'bn.js$': false,
+            'crypto-browserify$': path.resolve(__dirname, 'src/randomUUID.ts')
         },
     },
     module: {
@@ -55,7 +59,7 @@ const config: webpack.Configuration = {
           chunks: 'all',
           minChunks: 2,
           minSize: 0,
-          maxSize: 3 * 1024 * 100,
+          // maxSize: 3 * 1024 * 100,
           cacheGroups: {
             vendor: {
               test: /[\\/]node_modules[\\/]/,
