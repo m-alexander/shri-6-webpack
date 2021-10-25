@@ -23,8 +23,6 @@ class ModuleLogger {
       }
 
     apply(compiler: Compiler) {
-        const usedImports = new Set()
-
         compiler.hooks.normalModuleFactory.tap(
             'ModuleLogger',
             (normalModuleFactory) => {
@@ -33,7 +31,6 @@ class ModuleLogger {
                     const modulePath = _createData.resource;
 
                     if (modulePath.startsWith(this.options.srcRoot)) {
-                        usedImports.add(modulePath)
                         this.files.delete(modulePath)
                     }
 
