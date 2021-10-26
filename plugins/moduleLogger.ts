@@ -40,17 +40,17 @@ class ModuleLogger {
         );
 
         compiler.hooks.beforeRun.tapAsync('ModuleLogger', ({}, callback) => {
-            glob(this.options.srcRoot + '/**/*', { nodir: true }, (err, files) => {
-                this.files = new Set()
-                files
-                    .map((file) => path.resolve(__dirname, '..' ,file))
-                    .filter(file => !this.options.exclude.some(regexp => {
-                        return regexp.test(file)
+            glob(
+                this.options.srcRoot + '/**/*',
+                { nodir: true, absolute: true },
+                (err, files) => {
+                    this.files = new Set(files.filter(file => {
+                        return !this.options.exclude.some(regexp => regexp.test(file))
                     }))
-                    .forEach(file => this.files.add(file))
-                
-                callback()
-            });
+                    
+                    callback()
+                }
+            );
         })
 
         compiler.hooks.done.tapAsync('ModuleLogger', ({}, callback) => {
